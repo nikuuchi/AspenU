@@ -319,7 +319,7 @@ var C2JS;
         if (isCached) {
             $.ajax({
                 type: "POST",
-                url: "cgi-bin/compile.cgi",
+                url: "compile",
                 data: JSON.stringify({ source: source, option: option, filename: filename }),
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",

@@ -1,5 +1,9 @@
 import flask
+import compile_server
+import config
+
 app = flask.Flask(__name__)
+compiler_config = config.load()
 
 @app.route("/")
 def teaser_site():
@@ -22,8 +26,8 @@ def post_login():
     pass
 
 @app.route("/compile", methods=["POST"])
-def compile():
-    pass
+def post_compile():
+    return compile_server.compile_server(flask.request.json, compiler_config)
 
 @app.errorhandler(404)
 def page_not_found(error):
