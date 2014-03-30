@@ -5,3 +5,5 @@ bower_lib/
 
 development.yaml
 *.pyc
+
+*.mwb.bak
