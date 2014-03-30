@@ -7,7 +7,7 @@ compiler_config = config.load()
 
 @app.route("/")
 def teaser_site():
-    return "Hello World!"
+    return flask.redirect(flask.url_for('edit'))
 
 @app.route("/edit")
 def edit():
