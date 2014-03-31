@@ -28,7 +28,6 @@ module C2JS {
         constructor(editor_query: string) {
             this.editor = ace.edit(editor_query);
             this.editor.setTheme("ace/theme/xcode");
-            this.editor.getSession().setMode("ace/mode/c_cpp");
             this.ResetHelloWorld();
         }
 
@@ -38,6 +37,17 @@ module C2JS {
 
         GetValue(): string {
             return this.editor.getValue();
+        }
+
+        CreateSession(text: string): any {
+            var session = new ace.EditSession(text);
+            session.setMode("ace/mode/c_cpp");
+            return session;
+        }
+
+        ChangeSession(text: string): void {
+            var session = this.CreateSession(text);
+            this.editor.setSession(session);
         }
 
         SetValue(text: string): void {
@@ -79,11 +89,7 @@ module C2JS {
         }
 
         ResetHelloWorld(): void {
-            this.SetValue(GetHelloWorldSource());
-        }
-
-        ClearHistory(): void {
-            this.editor.clearHistory();
+            this.ChangeSession(GetHelloWorldSource());
         }
 
         ContainsMultiByteSpace(): boolean {
@@ -665,8 +671,7 @@ $(function () {
     var ChangeCurrentFile = (e: Event) => {
         if(running) return
         Files.SetCurrent((<any>e.target).id);
-        Editor.SetValue(DB.Load(Files.GetCurrent().GetName()));
-        Editor.ClearHistory();
+        Editor.ChangeSession(DB.Load(Files.GetCurrent().GetName()));
     };
 
     Files.Show(ChangeCurrentFile);
@@ -771,9 +776,8 @@ $(function () {
                 var fileModel = new C2JS.FileModel(Files.MakeUniqueName(file.name));
                 Files.Append(fileModel, ChangeCurrentFile);
                 Files.SetCurrent(fileModel.GetBaseName());
-                Editor.SetValue((<any>e.target).result);
+                Editor.ChangeSession((<any>e.target).result);
                 DB.Save(Files.GetCurrent().GetName(), Editor.GetValue());
-                Editor.ClearHistory();
             };
             reader.readAsText(file, 'utf-8');
         }
@@ -804,7 +808,6 @@ $(function () {
         Files.SetCurrent(file.GetBaseName());
         OnFilesBecomeNotEmpty();
         Editor.ResetHelloWorld();
-        Editor.ClearHistory();
     };
     (<any>$("#create-file")).tooltip({placement: "bottom", html: true});
     $("#create-file").click(CreateFileFunction);
