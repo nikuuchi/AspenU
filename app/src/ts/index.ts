@@ -3,103 +3,16 @@
 
 declare function saveAs(data :Blob, filename: String): void;
 var _ua: any;
-declare var ace: any;
 
-module C2JS {
+module AspenU {
 
-    export function GetHelloWorldSource(): string {
-        return "#include <stdio.h>\n\nint main() {\n    printf(\"hello, world!\\n\");\n    return 0;\n}";
-    }
-
+    /*
     export interface Reesponse {
         source:   string;
         error:    string;
         message:  string;
     }
-
-    export class Size {
-        constructor(public width: number, public height: number) {
-        }
-    }
-
-    export class Editor {
-        private editor: any; //TODO ace
-        private markedErrorLines: number[] = [];
-        constructor(editor_query: string) {
-            this.editor = ace.edit(editor_query);
-            this.editor.setTheme("ace/theme/xcode");
-            this.ResetHelloWorld();
-        }
-
-        OnChange(callback: (e: Event)=>void): void {
-            this.editor.on("change", callback);
-        }
-
-        GetValue(): string {
-            return this.editor.getValue();
-        }
-
-        CreateSession(text: string): any {
-            var session = new ace.EditSession(text);
-            session.setMode("ace/mode/c_cpp");
-            return session;
-        }
-
-        ChangeSession(text: string): void {
-            var session = this.CreateSession(text);
-            this.editor.setSession(session);
-        }
-
-        SetValue(text: string): void {
-            this.editor.setValue(text);
-            this.editor.clearSelection();
-            this.editor.gotoLine(0);
-        }
-
-        Clear(): void{
-            this.SetValue("");
-        }
-
-        Disable(): void {
-            this.editor.setOption("readOnly", "nocursor");
-            $(".CodeMirror-scroll").css({"background-color": "#eee"});
-        }
-
-        Enable(): void {
-            this.editor.setOption("readOnly", false);
-            $(".CodeMirror-scroll").css({"background-color": "#fff"});
-        }
-
-        SetErrorLine(line: number){
-            this.editor.addLineClass(line-1, "text", "errorLine");
-            this.markedErrorLines.push(line-1);
-        }
-
-        SetErrorLines(lines: number[]){
-            for(var i = 0; i < lines.length; ++i){
-                this.SetErrorLine(lines[i]);
-            }
-        }
-
-        RemoveAllErrorLine(): void {
-            for(var i = 0; i < this.markedErrorLines.length; ++i){
-                this.editor.removeLineClass(this.markedErrorLines[i], "text", "errorLine");
-            }
-            this.markedErrorLines = [];
-        }
-
-        ResetHelloWorld(): void {
-            this.ChangeSession(GetHelloWorldSource());
-        }
-
-        ContainsMultiByteSpace(): boolean {
-            return this.editor.getValue().match(/　/);
-        }
-
-        ReplaceMultiByteSpace(): void {
-            this.editor.setValue(this.editor.getValue().replace(/　/g, "  "));
-        }
-    }
+    */
 
     export class Output {
         constructor(public $output: JQuery){
@@ -620,11 +533,11 @@ var Aspen: any = {};
 
 $(function () {
 
-    var Editor: C2JS.Editor   = new C2JS.Editor("editor");
-    var Output: C2JS.Output   = new C2JS.Output($("#output"));
-    var DB:     C2JS.SourceDB = new C2JS.SourceDB();
-    var Context: any = {}; //TODO refactor C2JS.Response
-    var Files: C2JS.FileCollection = new C2JS.FileCollection();
+    var Editor: AspenU.Editor   = new AspenU.Editor("editor");
+    var Output: AspenU.Output   = new AspenU.Output($("#output"));
+    var DB:     AspenU.SourceDB = new AspenU.SourceDB();
+    var Context: any = {}; //TODO refactor AspenU.Response
+    var Files: AspenU.FileCollection = new AspenU.FileCollection();
 
     Aspen.Editor = Editor;
     Aspen.Output = Output;
@@ -640,7 +553,7 @@ $(function () {
     };
     Aspen.Debug.OutputClangMessage = (message, filename) => {
         Output.PrintLn('DEBUG');
-        Output.PrintLn(C2JS.FormatClangErrorMessage(message, filename));
+        Output.PrintLn(AspenU.FormatClangErrorMessage(message, filename));
     };
     Aspen.Debug.PrintC = (message) => {
         Output.PrintFromC(message);
@@ -712,7 +625,7 @@ $(function () {
         DisableUI();
         Editor.RemoveAllErrorLine();
 
-        C2JS.Compile(src, opt, file.GetName(), changeFlag, Context, function(res){
+        AspenU.Compile(src, opt, file.GetName(), changeFlag, Context, function(res){
             try{
                 changeFlag = false;
                 if(res == null) {
@@ -720,7 +633,7 @@ $(function () {
                     return;
                 }
                 if(res.error.length > 0) {
-                    Output.PrintLn(C2JS.FormatClangErrorMessage(res.error, file.GetBaseName()));
+                    Output.PrintLn(AspenU.FormatClangErrorMessage(res.error, file.GetBaseName()));
                     Editor.SetErrorLines(FindErrorNumbersInErrorMessage(res.error));
                 }
                 Output.Prompt();
@@ -728,7 +641,7 @@ $(function () {
                 Context.error = res.error;
                 if(!res.error.match("error:")) {
                     Output.PrintLn('./' + file.GetBaseName());
-                    C2JS.Run(res.source, Context, Output);
+                    AspenU.Run(res.source, Context, Output);
                 } else {
                     Context.source = null;
                 }
@@ -773,7 +686,7 @@ $(function () {
             };
             reader.onload = (e: Event)=> {
                 DB.Save(Files.GetCurrent().GetName(), Editor.GetValue());
-                var fileModel = new C2JS.FileModel(Files.MakeUniqueName(file.name));
+                var fileModel = new AspenU.FileModel(Files.MakeUniqueName(file.name));
                 Files.Append(fileModel, ChangeCurrentFile);
                 Files.SetCurrent(fileModel.GetBaseName());
                 Editor.ChangeSession((<any>e.target).result);
@@ -797,13 +710,13 @@ $(function () {
 
     var CreateFileFunction = (e: Event) => {
         if(running) return;
-        var filename = prompt("Please enter the file name.", C2JS.CheckFileName("", DB));
-        filename = C2JS.CheckFileName(filename, DB);
+        var filename = prompt("Please enter the file name.", AspenU.CheckFileName("", DB));
+        filename = AspenU.CheckFileName(filename, DB);
         if(filename == null) {
             return;
         }
 
-        var file = new C2JS.FileModel(filename);
+        var file = new AspenU.FileModel(filename);
         Files.Append(file, ChangeCurrentFile);
         Files.SetCurrent(file.GetBaseName());
         OnFilesBecomeNotEmpty();
@@ -820,7 +733,7 @@ $(function () {
         var oldfilecontents = Editor.GetValue();
 
         var filename = prompt("Rename: Please enter the file name.", oldfilebasename+".c");
-        filename = C2JS.CheckFileName(filename, DB);
+        filename = AspenU.CheckFileName(filename, DB);
         if(filename == null) {
             return;
         }
@@ -833,7 +746,7 @@ $(function () {
     var DeleteFileFunction = (e: Event) => {
         if(Files.Empty() || running) return;
         var BaseName = Files.GetCurrent().GetBaseName();
-        if(C2JS.ConfirmToRemove(BaseName)) {
+        if(AspenU.ConfirmToRemove(BaseName)) {
             Files.Remove(BaseName);
             if(Files.Empty()){
                 OnFilesBecomeEmpty();
@@ -850,7 +763,7 @@ $(function () {
     var DeleteAllFilesFunction = (e: Event) => {
         if(Files.Empty() || running) return;
         var BaseName = Files.GetCurrent().GetBaseName();
-        if(C2JS.ConfirmAllRemove()) {
+        if(AspenU.ConfirmAllRemove()) {
             Files.Clear();
         }
         OnFilesBecomeEmpty();

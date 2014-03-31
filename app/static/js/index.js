@@ -2,101 +2,15 @@
 ///<reference path='../typings/jquery_plugins.d.ts'/>
 var _ua;
 
-var C2JS;
-(function (C2JS) {
-    function GetHelloWorldSource() {
-        return "#include <stdio.h>\n\nint main() {\n    printf(\"hello, world!\\n\");\n    return 0;\n}";
+var AspenU;
+(function (AspenU) {
+    /*
+    export interface Reesponse {
+    source:   string;
+    error:    string;
+    message:  string;
     }
-    C2JS.GetHelloWorldSource = GetHelloWorldSource;
-
-    var Size = (function () {
-        function Size(width, height) {
-            this.width = width;
-            this.height = height;
-        }
-        return Size;
-    })();
-    C2JS.Size = Size;
-
-    var Editor = (function () {
-        function Editor(editor_query) {
-            this.markedErrorLines = [];
-            this.editor = ace.edit(editor_query);
-            this.editor.setTheme("ace/theme/xcode");
-            this.ResetHelloWorld();
-        }
-        Editor.prototype.OnChange = function (callback) {
-            this.editor.on("change", callback);
-        };
-
-        Editor.prototype.GetValue = function () {
-            return this.editor.getValue();
-        };
-
-        Editor.prototype.CreateSession = function (text) {
-            var session = new ace.EditSession(text);
-            session.setMode("ace/mode/c_cpp");
-            return session;
-        };
-
-        Editor.prototype.ChangeSession = function (text) {
-            var session = this.CreateSession(text);
-            this.editor.setSession(session);
-        };
-
-        Editor.prototype.SetValue = function (text) {
-            this.editor.setValue(text);
-            this.editor.clearSelection();
-            this.editor.gotoLine(0);
-        };
-
-        Editor.prototype.Clear = function () {
-            this.SetValue("");
-        };
-
-        Editor.prototype.Disable = function () {
-            this.editor.setOption("readOnly", "nocursor");
-            $(".CodeMirror-scroll").css({ "background-color": "#eee" });
-        };
-
-        Editor.prototype.Enable = function () {
-            this.editor.setOption("readOnly", false);
-            $(".CodeMirror-scroll").css({ "background-color": "#fff" });
-        };
-
-        Editor.prototype.SetErrorLine = function (line) {
-            this.editor.addLineClass(line - 1, "text", "errorLine");
-            this.markedErrorLines.push(line - 1);
-        };
-
-        Editor.prototype.SetErrorLines = function (lines) {
-            for (var i = 0; i < lines.length; ++i) {
-                this.SetErrorLine(lines[i]);
-            }
-        };
-
-        Editor.prototype.RemoveAllErrorLine = function () {
-            for (var i = 0; i < this.markedErrorLines.length; ++i) {
-                this.editor.removeLineClass(this.markedErrorLines[i], "text", "errorLine");
-            }
-            this.markedErrorLines = [];
-        };
-
-        Editor.prototype.ResetHelloWorld = function () {
-            this.ChangeSession(GetHelloWorldSource());
-        };
-
-        Editor.prototype.ContainsMultiByteSpace = function () {
-            return this.editor.getValue().match(/　/);
-        };
-
-        Editor.prototype.ReplaceMultiByteSpace = function () {
-            this.editor.setValue(this.editor.getValue().replace(/　/g, "  "));
-        };
-        return Editor;
-    })();
-    C2JS.Editor = Editor;
-
+    */
     var Output = (function () {
         function Output($output) {
             this.$output = $output;
@@ -147,7 +61,7 @@ var C2JS;
         };
         return Output;
     })();
-    C2JS.Output = Output;
+    AspenU.Output = Output;
 
     var FileModel = (function () {
         function FileModel(Name) {
@@ -167,7 +81,7 @@ var C2JS;
         };
         return FileModel;
     })();
-    C2JS.FileModel = FileModel;
+    AspenU.FileModel = FileModel;
 
     var FileCollection = (function () {
         function FileCollection() {
@@ -195,7 +109,7 @@ var C2JS;
                 var index = this.FileModels.push(file) - 1;
                 this.ActiveFileIndex = index;
                 localStorage.setItem(this.defaultNameKey, "program.c");
-                localStorage.setItem("program.c", GetHelloWorldSource());
+                localStorage.setItem("program.c", AspenU.GetHelloWorldSource());
             }
         }
         FileCollection.prototype.Append = function (NewFile, callback) {
@@ -297,7 +211,7 @@ var C2JS;
         };
         return FileCollection;
     })();
-    C2JS.FileCollection = FileCollection;
+    AspenU.FileCollection = FileCollection;
 
     var SourceDB = (function () {
         function SourceDB() {
@@ -319,7 +233,7 @@ var C2JS;
         };
         return SourceDB;
     })();
-    C2JS.SourceDB = SourceDB;
+    AspenU.SourceDB = SourceDB;
 
     function Compile(source, option, filename, isCached, Context, callback, onerror) {
         if (isCached) {
@@ -336,7 +250,7 @@ var C2JS;
             setTimeout(callback, 200, Context);
         }
     }
-    C2JS.Compile = Compile;
+    AspenU.Compile = Compile;
 
     function Run(source, ctx, out) {
         ctx.source = source;
@@ -351,7 +265,7 @@ var C2JS;
         }
         out.Prompt();
     }
-    C2JS.Run = Run;
+    AspenU.Run = Run;
 
     function TranslateMessageToJapanese(text) {
         text = text.replace(/&nbsp;/g, " ");
@@ -633,7 +547,7 @@ var C2JS;
     function FormatClangErrorMessage(text, fileName) {
         return FormatMessage(FormatFilename(ConvertTerminalColor(text), fileName), fileName);
     }
-    C2JS.FormatClangErrorMessage = FormatClangErrorMessage;
+    AspenU.FormatClangErrorMessage = FormatClangErrorMessage;
 
     function CheckFileName(name, DB) {
         var filename = name;
@@ -659,27 +573,27 @@ var C2JS;
         }
         return filename;
     }
-    C2JS.CheckFileName = CheckFileName;
+    AspenU.CheckFileName = CheckFileName;
 
     function ConfirmAllRemove() {
         return confirm('All items will be delete immediately. Are you sure you want to continue?');
     }
-    C2JS.ConfirmAllRemove = ConfirmAllRemove;
+    AspenU.ConfirmAllRemove = ConfirmAllRemove;
 
     function ConfirmToRemove(BaseName) {
         return confirm('The item "' + BaseName + '.c" will be delete immediately. Are you sure you want to continue?');
     }
-    C2JS.ConfirmToRemove = ConfirmToRemove;
-})(C2JS || (C2JS = {}));
+    AspenU.ConfirmToRemove = ConfirmToRemove;
+})(AspenU || (AspenU = {}));
 
 var Aspen = {};
 
 $(function () {
-    var Editor = new C2JS.Editor("editor");
-    var Output = new C2JS.Output($("#output"));
-    var DB = new C2JS.SourceDB();
+    var Editor = new AspenU.Editor("editor");
+    var Output = new AspenU.Output($("#output"));
+    var DB = new AspenU.SourceDB();
     var Context = {};
-    var Files = new C2JS.FileCollection();
+    var Files = new AspenU.FileCollection();
 
     Aspen.Editor = Editor;
     Aspen.Output = Output;
@@ -695,7 +609,7 @@ $(function () {
     };
     Aspen.Debug.OutputClangMessage = function (message, filename) {
         Output.PrintLn('DEBUG');
-        Output.PrintLn(C2JS.FormatClangErrorMessage(message, filename));
+        Output.PrintLn(AspenU.FormatClangErrorMessage(message, filename));
     };
     Aspen.Debug.PrintC = function (message) {
         Output.PrintFromC(message);
@@ -769,7 +683,7 @@ $(function () {
         DisableUI();
         Editor.RemoveAllErrorLine();
 
-        C2JS.Compile(src, opt, file.GetName(), changeFlag, Context, function (res) {
+        AspenU.Compile(src, opt, file.GetName(), changeFlag, Context, function (res) {
             try  {
                 changeFlag = false;
                 if (res == null) {
@@ -777,7 +691,7 @@ $(function () {
                     return;
                 }
                 if (res.error.length > 0) {
-                    Output.PrintLn(C2JS.FormatClangErrorMessage(res.error, file.GetBaseName()));
+                    Output.PrintLn(AspenU.FormatClangErrorMessage(res.error, file.GetBaseName()));
                     Editor.SetErrorLines(FindErrorNumbersInErrorMessage(res.error));
                 }
                 Output.Prompt();
@@ -785,7 +699,7 @@ $(function () {
                 Context.error = res.error;
                 if (!res.error.match("error:")) {
                     Output.PrintLn('./' + file.GetBaseName());
-                    C2JS.Run(res.source, Context, Output);
+                    AspenU.Run(res.source, Context, Output);
                 } else {
                     Context.source = null;
                 }
@@ -830,7 +744,7 @@ $(function () {
             };
             reader.onload = function (e) {
                 DB.Save(Files.GetCurrent().GetName(), Editor.GetValue());
-                var fileModel = new C2JS.FileModel(Files.MakeUniqueName(file.name));
+                var fileModel = new AspenU.FileModel(Files.MakeUniqueName(file.name));
                 Files.Append(fileModel, ChangeCurrentFile);
                 Files.SetCurrent(fileModel.GetBaseName());
                 Editor.ChangeSession(e.target.result);
@@ -855,13 +769,13 @@ $(function () {
     var CreateFileFunction = function (e) {
         if (running)
             return;
-        var filename = prompt("Please enter the file name.", C2JS.CheckFileName("", DB));
-        filename = C2JS.CheckFileName(filename, DB);
+        var filename = prompt("Please enter the file name.", AspenU.CheckFileName("", DB));
+        filename = AspenU.CheckFileName(filename, DB);
         if (filename == null) {
             return;
         }
 
-        var file = new C2JS.FileModel(filename);
+        var file = new AspenU.FileModel(filename);
         Files.Append(file, ChangeCurrentFile);
         Files.SetCurrent(file.GetBaseName());
         OnFilesBecomeNotEmpty();
@@ -879,7 +793,7 @@ $(function () {
         var oldfilecontents = Editor.GetValue();
 
         var filename = prompt("Rename: Please enter the file name.", oldfilebasename + ".c");
-        filename = C2JS.CheckFileName(filename, DB);
+        filename = AspenU.CheckFileName(filename, DB);
         if (filename == null) {
             return;
         }
@@ -893,7 +807,7 @@ $(function () {
         if (Files.Empty() || running)
             return;
         var BaseName = Files.GetCurrent().GetBaseName();
-        if (C2JS.ConfirmToRemove(BaseName)) {
+        if (AspenU.ConfirmToRemove(BaseName)) {
             Files.Remove(BaseName);
             if (Files.Empty()) {
                 OnFilesBecomeEmpty();
@@ -911,7 +825,7 @@ $(function () {
         if (Files.Empty() || running)
             return;
         var BaseName = Files.GetCurrent().GetBaseName();
-        if (C2JS.ConfirmAllRemove()) {
+        if (AspenU.ConfirmAllRemove()) {
             Files.Clear();
         }
         OnFilesBecomeEmpty();
