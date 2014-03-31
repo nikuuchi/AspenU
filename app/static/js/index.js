@@ -1,16 +1,95 @@
+var AspenU;
+(function (AspenU) {
+    function GetHelloWorldSource() {
+        return "#include <stdio.h>\n\nint main() {\n    printf(\"hello, world!\\n\");\n    return 0;\n}";
+    }
+    AspenU.GetHelloWorldSource = GetHelloWorldSource;
+
+    var Editor = (function () {
+        function Editor(editor_query) {
+            this.markedErrorLines = [];
+            this.editor = ace.edit(editor_query);
+            this.editor.setTheme("ace/theme/xcode");
+            this.ResetHelloWorld();
+        }
+        Editor.prototype.OnChange = function (callback) {
+            this.editor.on("change", callback);
+        };
+
+        Editor.prototype.GetValue = function () {
+            return this.editor.getValue();
+        };
+
+        Editor.prototype.CreateSession = function (text) {
+            var session = new ace.EditSession(text);
+            session.setMode("ace/mode/c_cpp");
+            return session;
+        };
+
+        Editor.prototype.ChangeSession = function (text) {
+            var session = this.CreateSession(text);
+            this.editor.setSession(session);
+        };
+
+        Editor.prototype.SetValue = function (text) {
+            this.editor.setValue(text);
+            this.editor.clearSelection();
+            this.editor.gotoLine(0);
+        };
+
+        Editor.prototype.Clear = function () {
+            this.SetValue("");
+        };
+
+        Editor.prototype.Disable = function () {
+            this.editor.setOption("readOnly", "nocursor");
+            $(".CodeMirror-scroll").css({ "background-color": "#eee" });
+        };
+
+        Editor.prototype.Enable = function () {
+            this.editor.setOption("readOnly", false);
+            $(".CodeMirror-scroll").css({ "background-color": "#fff" });
+        };
+
+        Editor.prototype.SetErrorLine = function (line) {
+            this.editor.addLineClass(line - 1, "text", "errorLine");
+            this.markedErrorLines.push(line - 1);
+        };
+
+        Editor.prototype.SetErrorLines = function (lines) {
+            for (var i = 0; i < lines.length; ++i) {
+                this.SetErrorLine(lines[i]);
+            }
+        };
+
+        Editor.prototype.RemoveAllErrorLine = function () {
+            for (var i = 0; i < this.markedErrorLines.length; ++i) {
+                this.editor.removeLineClass(this.markedErrorLines[i], "text", "errorLine");
+            }
+            this.markedErrorLines = [];
+        };
+
+        Editor.prototype.ResetHelloWorld = function () {
+            this.ChangeSession(GetHelloWorldSource());
+        };
+
+        Editor.prototype.ContainsMultiByteSpace = function () {
+            return this.editor.getValue().match(/　/);
+        };
+
+        Editor.prototype.ReplaceMultiByteSpace = function () {
+            this.editor.setValue(this.editor.getValue().replace(/　/g, "  "));
+        };
+        return Editor;
+    })();
+    AspenU.Editor = Editor;
+})(AspenU || (AspenU = {}));
 ///<reference path='../typings/jquery/jquery.d.ts'/>
 ///<reference path='../typings/jquery_plugins.d.ts'/>
 var _ua;
 
 var AspenU;
 (function (AspenU) {
-    /*
-    export interface Reesponse {
-    source:   string;
-    error:    string;
-    message:  string;
-    }
-    */
     var Output = (function () {
         function Output($output) {
             this.$output = $output;
@@ -780,6 +859,7 @@ $(function () {
         Files.SetCurrent(file.GetBaseName());
         OnFilesBecomeNotEmpty();
         Editor.ResetHelloWorld();
+        DB.Save(Files.GetCurrent().GetName(), Editor.GetValue());
     };
     $("#create-file").tooltip({ placement: "bottom", html: true });
     $("#create-file").click(CreateFileFunction);
@@ -862,3 +942,21 @@ $(function () {
         DisableUI();
     }
 });
+var _ua = (function () {
+    return {
+        ltIE6: typeof window.addEventListener == "undefined" && typeof document.documentElement.style.maxHeight == "undefined",
+        ltIE7: typeof window.addEventListener == "undefined" && typeof document.querySelectorAll == "undefined",
+        ltIE8: typeof window.addEventListener == "undefined" && typeof document.getElementsByClassName == "undefined",
+        ltIE9: document.uniqueID && !window.matchMedia,
+        gtIE10: document.uniqueID && document.documentMode >= 10,
+        Trident: document.uniqueID,
+        Gecko: 'MozAppearance' in document.documentElement.style,
+        Presto: window.opera,
+        Blink: window.chrome,
+        Webkit: !window.chrome && 'WebkitAppearance' in document.documentElement.style,
+        Touch: typeof document.ontouchstart != "undefined",
+        Mobile: typeof window.orientation != "undefined",
+        Pointer: window.navigator.pointerEnabled,
+        MSPoniter: window.navigator.msPointerEnabled
+    };
+})();

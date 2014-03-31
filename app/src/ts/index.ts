@@ -6,14 +6,6 @@ var _ua: any;
 
 module AspenU {
 
-    /*
-    export interface Reesponse {
-        source:   string;
-        error:    string;
-        message:  string;
-    }
-    */
-
     export class Output {
         constructor(public $output: JQuery){
         }
@@ -721,6 +713,7 @@ $(function () {
         Files.SetCurrent(file.GetBaseName());
         OnFilesBecomeNotEmpty();
         Editor.ResetHelloWorld();
+        DB.Save(Files.GetCurrent().GetName(), Editor.GetValue());
     };
     (<any>$("#create-file")).tooltip({placement: "bottom", html: true});
     $("#create-file").click(CreateFileFunction);

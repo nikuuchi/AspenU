@@ -6,7 +6,7 @@ var stylus = require('gulp-stylus');
 
 gulp.task('default', function() {
     gulp.src(['src/ts/*.ts'])
-        .pipe(tsc())
+        .pipe(tsc({out: 'index.js'}))
         .pipe(gulp.dest("static/js/"));
     gulp.src(['src/jade/*.jade'])
         .pipe(jade({pretty: true}))
