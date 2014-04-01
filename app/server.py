@@ -1,9 +1,23 @@
 import flask
+from flask.ext.sqlalchemy import SQLAlchemy
 import compile_server
 import config
 
 app = flask.Flask(__name__)
 compiler_config = config.load()
+db = SQLAlchemy()
+
+class User(db.model):
+    pass
+
+class Project(db.model):
+    pass
+
+class Source_File(db.model):
+    pass
+
+class Compile_Result(db.model):
+    pass
 
 @app.route("/")
 def teaser_site():
