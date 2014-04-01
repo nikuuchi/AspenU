@@ -46,12 +46,12 @@ module AspenU {
 
         Disable(): void {
             this.editor.setOption("readOnly", "nocursor");
-            $(".CodeMirror-scroll").css({"background-color": "#eee"});
+            $(".ace_scroller").css({"background-color": "#eee"});
         }
 
         Enable(): void {
             this.editor.setOption("readOnly", false);
-            $(".CodeMirror-scroll").css({"background-color": "#fff"});
+            $(".ace_scroller").css({"background-color": "#fff"});
         }
 
         SetErrorLine(line: number){

@@ -43,12 +43,12 @@ var AspenU;
 
         Editor.prototype.Disable = function () {
             this.editor.setOption("readOnly", "nocursor");
-            $(".CodeMirror-scroll").css({ "background-color": "#eee" });
+            $(".ace_scroller").css({ "background-color": "#eee" });
         };
 
         Editor.prototype.Enable = function () {
             this.editor.setOption("readOnly", false);
-            $(".CodeMirror-scroll").css({ "background-color": "#fff" });
+            $(".ace_scroller").css({ "background-color": "#fff" });
         };
 
         Editor.prototype.SetErrorLine = function (line) {
@@ -86,8 +86,6 @@ var AspenU;
 })(AspenU || (AspenU = {}));
 ///<reference path='../typings/jquery/jquery.d.ts'/>
 ///<reference path='../typings/jquery_plugins.d.ts'/>
-var _ua;
-
 var AspenU;
 (function (AspenU) {
     var Output = (function () {
@@ -313,38 +311,6 @@ var AspenU;
         return SourceDB;
     })();
     AspenU.SourceDB = SourceDB;
-
-    function Compile(source, option, filename, isCached, Context, callback, onerror) {
-        if (isCached) {
-            $.ajax({
-                type: "POST",
-                url: "compile",
-                data: JSON.stringify({ source: source, option: option, filename: filename }),
-                dataType: 'json',
-                contentType: "application/json; charset=utf-8",
-                success: callback,
-                error: onerror
-            });
-        } else {
-            setTimeout(callback, 200, Context);
-        }
-    }
-    AspenU.Compile = Compile;
-
-    function Run(source, ctx, out) {
-        ctx.source = source;
-        var Module = { print: function (x) {
-                out.PrintFromC(x);
-            } };
-        try  {
-            var exe = new Function("Module", source);
-            exe(Module);
-        } catch (e) {
-            out.Print(e);
-        }
-        out.Prompt();
-    }
-    AspenU.Run = Run;
 
     function TranslateMessageToJapanese(text) {
         text = text.replace(/&nbsp;/g, " ");
@@ -663,6 +629,48 @@ var AspenU;
         return confirm('The item "' + BaseName + '.c" will be delete immediately. Are you sure you want to continue?');
     }
     AspenU.ConfirmToRemove = ConfirmToRemove;
+})(AspenU || (AspenU = {}));
+///<reference path='../typings/jquery/jquery.d.ts'/>
+///<reference path='../typings/jquery_plugins.d.ts'/>
+///<reference path='./output.ts'/>
+var _ua;
+
+var AspenU;
+(function (AspenU) {
+    function Compile(source, option, filename, isCached, Context, callback, onerror) {
+        if (isCached) {
+            $.ajax({
+                type: "POST",
+                url: "compile",
+                data: JSON.stringify({ source: source, option: option, filename: filename }),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: callback,
+                error: onerror
+            });
+        } else {
+            setTimeout(callback, 200, Context);
+        }
+    }
+    AspenU.Compile = Compile;
+
+    function Run(source, ctx, out) {
+        ctx.source = source;
+        var Module = {
+            print: function (x) {
+                out.PrintFromC(x);
+            },
+            canvas: document.getElementById("canvas")
+        };
+        try  {
+            var exe = new Function("Module", source);
+            exe(Module);
+        } catch (e) {
+            out.Print(e);
+        }
+        out.Prompt();
+    }
+    AspenU.Run = Run;
 })(AspenU || (AspenU = {}));
 
 var Aspen = {};
