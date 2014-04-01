@@ -4,6 +4,7 @@
 module AspenU {
     export class Output {
         constructor(public $output: JQuery){
+            $output.css({"height": "200px"});
         }
 
         Print(val: string): void {
@@ -51,6 +52,13 @@ module AspenU {
             this.$output.text('');
         }
 
+        Expand(): void {
+            this.$output.css({"height": "300px"});
+        }
+
+        Shrink(): void {
+            this.$output.css({"height": "200px"});
+        }
     }
 
     export class FileModel {

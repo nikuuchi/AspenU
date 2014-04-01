@@ -70,11 +70,18 @@ $(function () {
         Output.PrintFromC(message);
     };
 
+    $("#close-console").click(()=>{
+        Editor.Expand();
+        Output.Shrink();
+    });
+
     var changeFlag = true;
     Editor.OnChange((e: Event)=> {
         if(!Files.Empty()){
             changeFlag = true;
             DB.Save(Files.GetCurrent().GetName(), Editor.GetValue());
+            Editor.Expand();
+            Output.Shrink();
         }
     });
 
@@ -83,6 +90,7 @@ $(function () {
     var DisableUI = () => {
         $(".disabled-on-running").addClass("disabled");
         Editor.Disable();
+        Output.Expand();
         running = true;
     }
 

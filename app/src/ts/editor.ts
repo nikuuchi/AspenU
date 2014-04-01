@@ -46,12 +46,17 @@ module AspenU {
 
         Disable(): void {
             this.editor.setOption("readOnly", "nocursor");
+            $("#editor").css({"height": "250px"});
             $(".ace_scroller").css({"background-color": "#eee"});
         }
 
         Enable(): void {
             this.editor.setOption("readOnly", false);
             $(".ace_scroller").css({"background-color": "#fff"});
+        }
+
+        Expand(): void {
+            $("#editor").css({"height": "400px"});
         }
 
         SetErrorLine(line: number){

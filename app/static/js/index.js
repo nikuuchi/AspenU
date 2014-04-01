@@ -43,12 +43,17 @@ var AspenU;
 
         Editor.prototype.Disable = function () {
             this.editor.setOption("readOnly", "nocursor");
+            $("#editor").css({ "height": "250px" });
             $(".ace_scroller").css({ "background-color": "#eee" });
         };
 
         Editor.prototype.Enable = function () {
             this.editor.setOption("readOnly", false);
             $(".ace_scroller").css({ "background-color": "#fff" });
+        };
+
+        Editor.prototype.Expand = function () {
+            $("#editor").css({ "height": "400px" });
         };
 
         Editor.prototype.SetErrorLine = function (line) {
@@ -91,6 +96,7 @@ var AspenU;
     var Output = (function () {
         function Output($output) {
             this.$output = $output;
+            $output.css({ "height": "200px" });
         }
         Output.prototype.Print = function (val) {
             this.$output.append(val);
@@ -135,6 +141,14 @@ var AspenU;
 
         Output.prototype.Clear = function () {
             this.$output.text('');
+        };
+
+        Output.prototype.Expand = function () {
+            this.$output.css({ "height": "300px" });
+        };
+
+        Output.prototype.Shrink = function () {
+            this.$output.css({ "height": "200px" });
         };
         return Output;
     })();
@@ -702,11 +716,18 @@ $(function () {
         Output.PrintFromC(message);
     };
 
+    $("#close-console").click(function () {
+        Editor.Expand();
+        Output.Shrink();
+    });
+
     var changeFlag = true;
     Editor.OnChange(function (e) {
         if (!Files.Empty()) {
             changeFlag = true;
             DB.Save(Files.GetCurrent().GetName(), Editor.GetValue());
+            Editor.Expand();
+            Output.Shrink();
         }
     });
 
@@ -715,6 +736,7 @@ $(function () {
     var DisableUI = function () {
         $(".disabled-on-running").addClass("disabled");
         Editor.Disable();
+        Output.Expand();
         running = true;
     };
 

@@ -89,11 +89,13 @@ html
       #editor
       .panel.panel-default
         .panel-heading
-          h4 Console Output 
-            .checkbox
-              label
-                input#JpModeCheck(type="checkbox")
-                | エラーメッセージを日本語化する(β)
+          h4 Console Output
+            a#close-console(href="#", style="color: #000;")
+              span.glyphicon.glyphicon-arrow-down.pull-right
+          .checkbox
+            label
+              input#JpModeCheck(type="checkbox")
+              | エラーメッセージを日本語化する(β)
         #output.panel-body
         canvas#canvas.panel-body
     // Include all compiled plugins (below), or include individual files as needed
