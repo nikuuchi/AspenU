@@ -1,0 +1,7 @@
+mixin js(path)
+  script(type='text/javascript', src='static/'+path)
+mixin css(path)
+  link(rel='stylesheet', href='static/'+path)
+mixin template(id)
+  script(id=id, type="text/x-jquery-tmpl")
+    block
