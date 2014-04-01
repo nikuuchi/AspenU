@@ -25,6 +25,10 @@ def admin_info():
 def post_login():
     pass
 
+@app.route("/register", methods=["POST"])
+def post_register():
+    pass
+
 @app.route("/compile", methods=["POST"])
 def post_compile():
     return compile_server.compile_server(flask.request.json, compiler_config)
